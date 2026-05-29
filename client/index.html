@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data:;">
+    <title>TaskFlow</title>
+
+    <!-- jQuery Mobile stylesheet -->
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Our custom styles -->
+    <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+
+
+<!-- Login page -->
+<div data-role="page" id="page-login" class="page-wrap">
+
+    <!-- Colourful top banner -->
+    <div class="login-banner">
+        <div class="login-icon-box">✓</div>
+        <h1>Taska</h1>
+        <p>Your personal task manager</p>
+    </div>
+
+    <!-- White card that slides up over the banner -->
+    <div class="login-card">
+        <h2>Sign in</h2>
+
+        <div class="field-group">
+            <label>Email address</label>
+            <input type="email" id="login-email" placeholder="you@example.com" autocomplete="off" />
+        </div>
+
+        <div class="field-group">
+            <label>Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password" />
+        </div>
+
+        <!-- Error message shown on failed login -->
+        <p id="login-error" class="error-msg" style="display: none;"></p>
+
+        <button id="btn-login" class="btn btn-solid">Sign In</button>
+
+        <div class="or-divider">or</div>
+
+        <button id="go-signup" class="btn btn-outline">Create an account</button>
+    </div>
+
+</div>
+
+<!-- register page -->
+<div data-role="page" id="page-signup" class="page-wrap">
+
+    <div data-role="header" class="app-header">
+        <a href="#page-login" data-rel="back" class="back-link">‹ Back</a>
+        <h1>Create Account</h1>
+    </div>
+
+    <div data-role="content" class="page-content">
+
+        <div class="form-card">
+            <div class="form-card-label orange">New Account</div>
+
+            <div class="field-group">
+                <label>Full Name</label>
+                <input type="text" id="signup-name" placeholder="Your full name" />
+            </div>
+
+            <div class="field-group">
+                <label>Email</label>
+                <input type="email" id="signup-email" placeholder="you@example.com" />
+            </div>
+
+            <div class="field-group">
+                <label>Password <span class="label-hint">— at least 6 characters</span></label>
+                <input type="password" id="signup-password" placeholder="Choose a password" />
+            </div>
+
+            <p id="signup-error" class="error-msg" style="display: none;"></p>
+
+            <button id="btn-signup" class="btn btn-solid" style="margin-top: 10px;">Create Account</button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Home page -->
+<div data-role="page" id="page-home" class="page-wrap">
+
+    <div data-role="header" class="app-header app-header-home">
+        <h1>✓ Taska</h1>
+        <a href="#" id="btn-logout" class="logout-link ui-btn-right">Logout</a>
+    </div>
+
+    <div data-role="content" class="page-content home-content">
+
+        <!-- Top greeting section with stats -->
+        <div class="home-top">
+            <div class="greeting">
+                <p class="greeting-hi">Hello,</p>
+                <h2 class="greeting-name" id="greeting-name">there 👋</h2>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-box stat-blue">
+                    <span class="stat-number" id="stat-total">0</span>
+                    <span class="stat-label">Total</span>
+                </div>
+                <div class="stat-box stat-orange">
+                    <span class="stat-number" id="stat-pending">0</span>
+                    <span class="stat-label">To Do</span>
+                </div>
+                <div class="stat-box stat-green">
+                    <span class="stat-number" id="stat-done">0</span>
+                    <span class="stat-label">Done</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress bar showing how many tasks are done -->
+        <div class="progress-section">
+            <div class="progress-info">
+                <span>Progress</span>
+                <span id="progress-label">0%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Filter buttons to switch between All / Pending / Done / High priority -->
+        <div class="filter-row">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="pending">Pending</button>
+            <button class="filter-btn" data-filter="done">Done</button>
+            <button class="filter-btn filter-high" data-filter="high">🔴 High</button>
+        </div>
+
+        <!-- Search bar -->
+        <div class="search-wrap">
+            <input type="search" id="search-input" placeholder="🔍  Search tasks..." data-role="none" />
+        </div>
+
+        <!-- Task cards are injected here by JavaScript -->
+        <div id="task-list"></div>
+
+        <!-- Shown when the filtered list is empty -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <div class="empty-emoji">📋</div>
+            <h3>No tasks here!</h3>
+            <p>Tap the <strong>＋</strong> button to add one.</p>
+        </div>
+
+    </div>
+
+    <!-- Floating add button at the bottom -->
+    <div data-role="footer" class="app-footer">
+        <a href="#page-add-task" class="fab-btn" data-transition="slide">＋</a>
+    </div>
+
+</div>
+
+
+<!-- add task page -->
+<div data-role="page" id="page-add-task" class="page-wrap">
+
+    <div data-role="header" class="app-header">
+        <a href="#page-home" data-rel="back" class="back-link">‹ Back</a>
+        <h1>New Task</h1>
+    </div>
+
+    <div data-role="content" class="page-content">
+
+        <div class="form-card">
+            <div class="form-card-label blue">Task Details</div>
+
+            <div class="field-group">
+                <label>Title <span class="required">*</span></label>
+                <input type="text" id="add-title" placeholder="What needs to be done?" />
+            </div>
+
+            <div class="field-group">
+                <label>Description</label>
+                <textarea id="add-description" rows="3" placeholder="Add some details (optional)..."></textarea>
+            </div>
+
+            <div class="field-group">
+                <label>Category</label>
+                <input type="text" id="add-category" placeholder="e.g. Work, Study, Personal" />
+            </div>
+
+            <div class="field-group">
+                <label>Priority</label>
+                <div class="priority-picker" id="add-priority-picker">
+                    <button class="prio-opt prio-low"    data-value="low">🟢 Low</button>
+                    <button class="prio-opt prio-medium prio-selected" data-value="medium">🟡 Medium</button>
+                    <button class="prio-opt prio-high"   data-value="high">🔴 High</button>
+                </div>
+                <input type="hidden" id="add-priority" value="medium" />
+            </div>
+
+            <div class="field-group">
+                <label>Due Date</label>
+                <input type="date" id="add-due" />
+            </div>
+
+            <p id="add-error" class="error-msg" style="display: none;"></p>
+
+            <button id="btn-add-task" class="btn btn-solid" style="margin-top: 6px;">Add Task</button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- edit task page -->
+<div data-role="page" id="page-edit-task" class="page-wrap">
+
+    <div data-role="header" class="app-header">
+        <a href="#page-home" data-rel="back" class="back-link">‹ Back</a>
+        <h1>Edit Task</h1>
+    </div>
+
+    <div data-role="content" class="page-content">
+
+        <div class="form-card">
+            <div class="form-card-label teal">Edit Details</div>
+
+            <!-- Hidden field to store the task's ID while editing -->
+            <input type="hidden" id="edit-id" />
+
+            <div class="field-group">
+                <label>Title <span class="required">*</span></label>
+                <input type="text" id="edit-title" />
+            </div>
+
+            <div class="field-group">
+                <label>Description</label>
+                <textarea id="edit-description" rows="3"></textarea>
+            </div>
+
+            <div class="field-group">
+                <label>Category</label>
+                <input type="text" id="edit-category" />
+            </div>
+
+            <div class="field-group">
+                <label>Priority</label>
+                <div class="priority-picker" id="edit-priority-picker">
+                    <button class="prio-opt prio-low"    data-value="low">🟢 Low</button>
+                    <button class="prio-opt prio-medium" data-value="medium">🟡 Medium</button>
+                    <button class="prio-opt prio-high"   data-value="high">🔴 High</button>
+                </div>
+                <input type="hidden" id="edit-priority" value="medium" />
+            </div>
+
+            <div class="field-group">
+                <label>Due Date</label>
+                <input type="date" id="edit-due" />
+            </div>
+
+            <div class="field-group toggle-row">
+                <label>Mark as completed</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="edit-completed" />
+                    <span class="toggle-track"></span>
+                </label>
+            </div>
+
+            <p id="edit-error" class="error-msg" style="display: none;"></p>
+
+            <button id="btn-save-edit" class="btn btn-solid"   style="margin-top: 6px;">Save Changes</button>
+            <button id="btn-delete"    class="btn btn-danger">Delete Task</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Toast notification (appears at the bottom of the screen) -->
+<div id="toast-msg"></div>
+
+<!-- Load jQuery before jQuery Mobile -->
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
