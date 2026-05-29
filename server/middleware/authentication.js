@@ -1,3 +1,4 @@
+// this middleware check if the user is logged in or not using the jwt web token 
 const jwt  = require('jsonwebtoken');
 const User = require('../models/User');
 

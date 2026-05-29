@@ -11,9 +11,8 @@ router.use(authentication);
 // retrive all tasks
 router.get('/', async function(req, res, next) {
     try {
-        // const tasks = await Task.findByUser(req.user._id);
-        // res.json(tasks);
-        res.json("Hellow world")
+        const tasks = await Task.findByUser(req.user._id);
+        res.json(tasks);
 
     } catch (error) {
         next(error);
