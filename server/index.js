@@ -47,6 +47,7 @@ app.use('/api/tasks', taskRoutes);
 app.get('/api/health', function(req, res){
     res.json({
         status: 'Ok',
+        message: "The api is running",
         time: new Date()
     });
 });

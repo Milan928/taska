@@ -1,5 +1,9 @@
 // base url
-var API_URL = 'https://localhost:3000/api';
+//  var API_URL = 'https://localhost:3000/api';
+
+
+// rendor url 
+var render_url = "https://taska-server-7org.onrender.com/api";
 
 // storing jwt token in local storage of web so that user can stay logged in after refreshing the page
 var token       = localStorage.getItem('tf_token') || '';
@@ -66,9 +70,9 @@ function selectPriority(pickerId, value) {
 
 // resualble api request helper
 function apiRequest(method, path, data, onSuccess, onError) {
-    console.log(API_URL+path);
+    console.log(render_url+path);
     var requestOptions = {
-        url:         API_URL + path,
+        url:         render_url + path,
         type:        method,
         contentType: 'application/json',
         success:     onSuccess,
@@ -140,6 +144,7 @@ $(document).on('click', '#btn-login', function() {
             saveAuthData(data);
             $button.text('Sign In').prop('disabled', false);
             $('#login-password').val('');
+            showToast('Login Success');
             $.mobile.navigate('#page-home');
         },
         function(errorMessage) {
@@ -175,9 +180,13 @@ $(document).on('click', '#btn-signup', function() {
 
     apiRequest('POST', '/auth/signup', { name: name, email: email, password: password },
         function(data) {
-            saveAuthData(data);
             $button.text('Create Account').prop('disabled', false);
-            $.mobile.navigate('#page-home');
+
+            // Show a success message so the user knows their account was created
+            showToast('Account created! Please sign in.', 'success');
+
+            // Navigate to login so they can sign in with their new credentials
+            $.mobile.changePage('#page-login', { transition: 'slide' });
         },
         function(errorMessage) {
             showError('#signup-error', errorMessage);
