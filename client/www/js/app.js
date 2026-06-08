@@ -1,8 +1,8 @@
-// base url
+// base url - use this url for local server
 //  var API_URL = 'https://localhost:3000/api';
 
 
-// rendor url 
+// rendor url - use this url for live server
 var render_url = "https://taska-server-7org.onrender.com/api";
 
 // storing jwt token in local storage of web so that user can stay logged in after refreshing the page
